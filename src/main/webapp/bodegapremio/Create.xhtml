@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="BodegapremioCreateDlg" widgetVar="BodegapremioCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateBodegapremioTitle}">
+            <h:form id="BodegapremioCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{bodegapremioController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateBodegapremioLabel_premiobodId}" for="premiobodId" />
+                        <p:inputText id="premiobodId" value="#{bodegapremioController.selected.premiobodId}" title="#{bundle.CreateBodegapremioTitle_premiobodId}" required="true" requiredMessage="#{bundle.CreateBodegapremioRequiredMessage_premiobodId}"/>
+                        <p:outputLabel value="#{bundle.CreateBodegapremioLabel_nombrePremiobod}" for="nombrePremiobod" />
+                        <p:inputText id="nombrePremiobod" value="#{bodegapremioController.selected.nombrePremiobod}" title="#{bundle.CreateBodegapremioTitle_nombrePremiobod}" />
+                        <p:outputLabel value="#{bundle.CreateBodegapremioLabel_distincion}" for="distincion" />
+                        <p:inputText id="distincion" value="#{bodegapremioController.selected.distincion}" title="#{bundle.CreateBodegapremioTitle_distincion}" />
+                        <p:outputLabel value="#{bundle.CreateBodegapremioLabel_ano}" for="ano" />
+                        <p:inputText id="ano" value="#{bodegapremioController.selected.ano}" title="#{bundle.CreateBodegapremioTitle_ano}" />
+                        <p:outputLabel value="#{bundle.CreateBodegapremioLabel_bodegaId}" for="bodegaId" />
+                        <p:selectOneMenu id="bodegaId" value="#{bodegapremioController.selected.bodegaId}" >
+                            <f:selectItems value="#{bodegaController.itemsAvailableSelectOne}"
+                                           var="bodegaIdItem"
+                                           itemValue="#{bodegaIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{bodegapremioController.create}" value="#{bundle.Save}" update="display,:BodegapremioListForm:datalist,:growl" oncomplete="handleSubmit(args,'BodegapremioCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="BodegapremioCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

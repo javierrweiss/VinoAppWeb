@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="NotadecataViewDlg" widgetVar="NotadecataViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewNotadecataTitle}">
+            <h:form id="NotadecataViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{notadecataController.selected != null}">
+                        <h:outputText value="#{bundle.ViewNotadecataLabel_notaDeCataId}"/>
+                        <h:outputText value="#{notadecataController.selected.notaDeCataId}" title="#{bundle.ViewNotadecataTitle_notaDeCataId}"/>
+                        <h:outputText value="#{bundle.ViewNotadecataLabel_notaDeCata}"/>
+                        <h:outputText value="#{notadecataController.selected.notaDeCata}" title="#{bundle.ViewNotadecataTitle_notaDeCata}"/>
+                        <h:outputText value="#{bundle.ViewNotadecataLabel_usuarioId}"/>
+                        <h:outputText value="#{notadecataController.selected.usuarioId}" title="#{bundle.ViewNotadecataTitle_usuarioId}"/>
+                        <h:outputText value="#{bundle.ViewNotadecataLabel_vinoId}"/>
+                        <h:outputText value="#{notadecataController.selected.vinoId}" title="#{bundle.ViewNotadecataTitle_vinoId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="NotadecataViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

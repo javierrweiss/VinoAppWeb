@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsuarioCreateDlg" widgetVar="UsuarioCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateUsuarioTitle}">
+            <h:form id="UsuarioCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usuarioController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_usuarioId}" for="usuarioId" />
+                        <p:inputText id="usuarioId" value="#{usuarioController.selected.usuarioId}" title="#{bundle.CreateUsuarioTitle_usuarioId}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_usuarioId}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_cuentaUsuario}" for="cuentaUsuario" />
+                        <p:inputText id="cuentaUsuario" value="#{usuarioController.selected.cuentaUsuario}" title="#{bundle.CreateUsuarioTitle_cuentaUsuario}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_cuentaUsuario}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_nombre}" for="nombre" />
+                        <p:inputText id="nombre" value="#{usuarioController.selected.nombre}" title="#{bundle.CreateUsuarioTitle_nombre}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_nombre}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_apellido}" for="apellido" />
+                        <p:inputText id="apellido" value="#{usuarioController.selected.apellido}" title="#{bundle.CreateUsuarioTitle_apellido}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_apellido}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_pais}" for="pais" />
+                        <p:inputText id="pais" value="#{usuarioController.selected.pais}" title="#{bundle.CreateUsuarioTitle_pais}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_pais}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_region}" for="region" />
+                        <p:inputText id="region" value="#{usuarioController.selected.region}" title="#{bundle.CreateUsuarioTitle_region}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_region}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_ciudad}" for="ciudad" />
+                        <p:inputText id="ciudad" value="#{usuarioController.selected.ciudad}" title="#{bundle.CreateUsuarioTitle_ciudad}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_ciudad}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_email}" for="email" />
+                        <p:inputText id="email" value="#{usuarioController.selected.email}" title="#{bundle.CreateUsuarioTitle_email}" required="true" requiredMessage="#{bundle.CreateUsuarioRequiredMessage_email}"/>
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_codPostal}" for="codPostal" />
+                        <p:inputText id="codPostal" value="#{usuarioController.selected.codPostal}" title="#{bundle.CreateUsuarioTitle_codPostal}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{usuarioController.create}" value="#{bundle.Save}" update="display,:UsuarioListForm:datalist,:growl" oncomplete="handleSubmit(args,'UsuarioCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="UsuarioCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

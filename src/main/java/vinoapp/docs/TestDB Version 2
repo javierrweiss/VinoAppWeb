@@ -1,0 +1,199 @@
+use VinoappDB;
+
+-- 1. Mostrar el/los vino(s) mejor rankeado(s)
+    
+    --muestra los mejores 
+select  r.vino_id,v.nombre,avg(r.ranking) as ranking
+from    rankings r
+join    vinos v
+on      v.vino_id=r.vino_id
+group by r.`vino_id`
+order by ranking desc;
+
+    --limita la seleción al primero
+select      r.vino_id,v.nombre,avg(r.ranking) as ranking
+from        rankings r
+join        vinos v
+on          v.vino_id=r.vino_id
+group by    r.`vino_id`
+order by    ranking 
+desc limit  1;
+   
+-- 2. ¿Cuál es la bodega más premiada?
+select   count(bodegas.nombre_bodega) as premios,bodegas.`nombre_bodega`
+from     premios  
+join     vinos on (vinos.vino_id=premios.vino_id) 
+join     bodegas on (bodegas.bodega_id=vinos.bodega_id)
+group by bodegas.`nombre_bodega`
+order by premios desc limit 2;
+
+    -- prueba general
+select   v.bodega_id as IdentificacionBodega,b.nombre_bodega as Bodega, v.nombre as Vino
+from     vinos v 
+join     premios p on (v.vino_id=p.vino_id) 
+join     bodegas  b on (b.bodega_id=v.bodega_id);
+    
+    -- sirve para corroborar la integridad y congruencia de los datos en cada tabla relacionada
+select   vinos.vino_id IdentificacionVinoTVino,premios.vino_id IdentificacionVinoTPremios,
+         vinos.bodega_id IdentificacionBodega,bodegas.nombre_bodega Bodega, vinos.nombre 
+from     vinos 
+join     premios on (vinos.vino_id=premios.vino_id) 
+join     bodegas on (bodegas.bodega_id=vinos.bodega_id);
+
+-- 3. ¿Cuál es la cosecha Malbec con más premios?
+    --Esta query es aceptada por MariaDB, pero remotemysql/phpmyadmin envía un error aludiendo 
+--que es incompatible con sql_mode=only_full_group_by. Si agrego vinos.cepas al group by arroja 
+--un resultado incorrecto.
+select      count(vinos.cosecha) premios, vinos.cosecha, vinos.cepas 
+from        premios
+join        vinos
+on          vinos.`vino_id`=premios.`vino_id`
+group by    vinos.cosecha
+having      vinos.cepas like 'Malbec'
+order by    vinos.cepas 
+asc limit  1; 
+
+    --prueba
+select premios.vino_id as vino_premiado,premios.`nombre_premio`,vinos.* 
+from   premios
+join   vinos
+on     vinos.`vino_id`=premios.vino_id;
+
+-- compatible con remotemysql/phpmyadmin
+select      vinos.cepas,
+            count(vinos.cosecha) premios 
+from        premios
+join        vinos
+on          vinos.`vino_id`=premios.`vino_id`
+group by    vinos.cepas
+having      vinos.cepas like 'Malbec'
+order by    vinos.cepas 
+asc limit  1; 
+
+-- 4. ¿Cuál es la cepa con más premios?
+select       count(vinos.cepas) as cepas_premiadas_veces, vinos.cepas
+from         premios
+join         vinos
+on           vinos.`vino_id`=premios.`vino_id`
+group by     vinos.cepas
+order by     cepas_premiadas_veces 
+desc limit   1;
+
+    --prueba (la misma de arriba)
+select premios.vino_id as vino_premiado,premios.`nombre_premio`,vinos.* 
+from   premios
+join   vinos
+on     vinos.`vino_id`=premios.vino_id;
+
+-- 5. ¿Cuál es el usuario con más rankings?
+select       count(rankings.`usuario_id`) num_rankings, usuarios.cuenta_usuario usuarios
+from         rankings
+join         usuarios
+on           usuarios.`usuario_id`=rankings.`usuario_id`
+group by     usuarios.cuenta_usuario
+order by     num_rankings
+desc limit   1;
+
+    --prueba
+select rankings.usuario_id, usuarios.cuenta_usuario 
+from   rankings
+join   usuarios
+on     rankings.`usuario_id`=usuarios.`usuario_id`;
+
+-- 6. ¿De qué país y de qué región provienen los vinos con medallas de oro y/o puntuación de 100? 
+select  bodegas.pais,vinos.terruno,premios.medalla,premios.puntaje
+from    bodegas
+join    vinos    on (vinos.bodega_id=bodegas.bodega_id)
+join    premios on (vinos.vino_id=premios.vino_id)
+where   (vinos.`terruno`,premios.medalla, premios.puntaje) = any 
+    (select      vinos.terruno, premios.medalla, premios.puntaje
+    from        vinos
+    join        premios on (vinos.vino_id = premios.vino_id)
+    where       medalla = 'oro' or puntaje = 100);
+
+    --prueba
+select bodegas.pais,vinos.`terruno`,premios.`medalla`, premios.puntaje
+from   premios
+join   vinos on (premios.`vino_id`=vinos.`vino_id`)
+join   bodegas on (vinos.`bodega_id`=bodegas.`bodega_id`);
+
+-- 7. ¿Cuál es la más antigua de las bodegas que han obtenido premios y con cuáles de sus vinos?
+select   bodegas.`nombre_bodega` as bodegas, vinos.bodega_id, premios.vino_id, `vinos`.`nombre` as vinos, 
+         min(bodegas.fundacion) as antigüedad 
+from     bodegas
+join     vinos   on (vinos.bodega_id=bodegas.bodega_id)
+join     premios on (vinos.vino_id=premios.vino_id)
+group by bodegas.nombre_bodega,vinos.bodega_id,premios.vino_id --para que pueda correr en remotemysql hubo que agregar los dos últimos elementos
+order by antigüedad asc limit 1;
+
+    --prueba
+select   bodegas.`nombre_bodega` as bodegas, vinos.bodega_id, premios.vino_id, `vinos`.`nombre` as vinos, 
+         min(bodegas.fundacion) as antigüedad 
+from     bodegas
+join     vinos   on (vinos.bodega_id=bodegas.bodega_id)
+join     premios on (vinos.vino_id=premios.vino_id)
+group by bodegas.nombre_bodega,vinos.bodega_id,premios.vino_id,vinos.nombre --igual en la prueba
+order by antigüedad asc;
+
+-- 8. ¿De qué país provienen la mayoría de usuarios de la aplicación?
+select      count(pais), pais 
+from        usuarios
+group by    pais
+order by    count(*)
+desc limit 1;
+
+    --prueba
+select pais,concat(nombre,' ',apellido) 
+from usuarios
+order by pais asc;
+
+-- 9. ¿Cuáles vinos argentinos de la cosecha 2014 obtuvieron una puntuación superior a 90 en los distintos premios?
+select       premios.vino_id, vinos.nombre as vino, vinos.cosecha as cosecha, premios.puntaje
+from         premios 
+join         vinos   on (vinos.vino_id=premios.vino_id)
+join         bodegas on (vinos.bodega_id=bodegas.bodega_id)
+where        vinos.cosecha = 2014 and premios.puntaje > 90 and bodegas.pais = 'Argentina'
+group by     premios.vino_id,vinos.nombre,vinos.cosecha,premios.puntaje;
+
+    --prueba
+select       vinos.nombre,vinos.cosecha,premios.puntaje, bodegas.pais 
+from         premios
+join         vinos   on (vinos.vino_id=premios.vino_id)
+join         bodegas on (vinos.`bodega_id`=bodegas.`bodega_id`);
+
+-- 10. ¿Cuál es el vino con el mejor promedio entre rankings de usuarios y premios obtenidos? 
+    
+    --Esta respuesta corre sin problemas en MariaDB, pero arroja error en remotemysql. 
+    --Si se agregan todos los elementos del select en el group by no calcula ningún promedio
+    --y repite los vinos.
+select   p.vino_id,v.nombre,avg(p.puntaje) as promedio_puntaje,
+         avg(r.ranking) as ranking
+from     vinos v
+join     rankings r on (v.vino_id=r.vino_id)
+join     premios  p on (v.vino_id=p.vino_id)
+group by p.vino_id
+order by concat(p.`puntaje`,' ',r.ranking) desc;
+
+    --prueba 
+select   r.vino_id,v.nombre,avg(r.ranking) as ranking
+from     rankings r
+join     vinos v
+on       v.vino_id=r.vino_id
+group by r.`vino_id`
+order by ranking desc;
+
+select   p.vino_id,v.nombre,avg(p.puntaje) as promedio_puntaje
+from     premios p
+join     vinos v
+on       v.vino_id=p.vino_id
+group by p.vino_id
+order by promedio_puntaje desc;
+
+--No logro alcanzar una solución para remotemysql/phpmyadmin.Esto es lo más cerca
+select      avg(premios.puntaje) as promedio_puntaje,avg(rankings.ranking) as ranking,
+            vinos.nombre,premios.`vino_id`
+from        vinos 
+join        rankings  on (vinos.vino_id=rankings.vino_id)
+join        premios   on (vinos.vino_id=premios.vino_id)
+group by    vinos.nombre,`premios`.`vino_id`,premios.`puntaje`,rankings.`ranking`
+order by    concat(premios.`puntaje`,' ',rankings.ranking) desc; 

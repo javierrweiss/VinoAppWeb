@@ -1,0 +1,106 @@
+use VinoappDB;
+
+-- 1. Mostrar el/los vino(s) mejor rankeado(s)
+select   nombre_vino, ranking
+from     rankings
+where    ranking > 4;
+select * from rankings;
+
+-- 2. ¿Cuál es la bodega más premiada?
+select     premios.`nombre_premio_ref`,vino.`nombre`,vino.`nombre_bodega`
+from       premios
+join       vino 
+on         vino.`nombre`=premios.`nombre_vino`
+group by   premios.`nombre_premio_ref`;           
+
+-- 3. ¿Cuál es la cosecha Malbec con más premios?
+select      count(ano_vino) premios, ano_vino cosecha, cepas 
+from        premios
+group by    cosecha, cepas
+having      cepas rlike 'Malbec'
+order by    cepas, ano_vino
+asc limit  1; 
+select * from premios;
+
+-- 4. ¿Cuál es la cepa con más premios?
+select       count(cepas) as cepas_premiadas_veces, cepas
+from         premios
+group by     cepas
+having       cepas_premiadas_veces = (
+    select   count(cepas) cepas_premiadas_veces
+    from     premios
+    group by cepas
+    order by cepas_premiadas_veces
+    desc limit 1
+);
+select * from premios;
+-- 5. ¿Cuál es el usuario con más rankings?
+select       count(cuenta_usuario) num_rankings, cuenta_usuario usuario
+from         rankings
+group by     cuenta_usuario
+having       num_rankings = (
+    select   count(cuenta_usuario) num_rankings
+    from     rankings
+    group by cuenta_usuario
+    order by num_rankings
+    desc limit 1
+);
+select * from rankings;
+
+-- 6. ¿De qué país y de qué región provienen los vinos con medallas de oro y/o puntuación de 100? 
+select  bodegas.pais,vino.terruno,premios.medalla,premios.puntaje
+from    bodegas
+join    vino    on (vino.`nombre_bodega`=bodegas.nombre_bodega)
+join    premios on (vino.`nombre`=premios.`nombre_vino`)
+where   (vino.`terruno`,premios.medalla, premios.puntaje) = any 
+    (select      vino.terruno, premios.medalla, premios.puntaje
+    from        vino
+    join        premios on (vino.nombre = premios.nombre_vino)
+    where       medalla = 'oro' or puntaje = 100);
+
+-- 7. ¿Cuál es la más antigua de las bodegas que han obtenido premios y con cuáles de sus vinos?
+select   vino.nombre_bodega as bodegas, premios.nombre_vino as vinos, 
+         min(bodegas.fundacion) as antigüedad 
+from     vino
+join     premios on (vino.`nombre`=premios.`nombre_vino`)
+join     bodegas on (vino.`nombre_bodega`=bodegas.`nombre_bodega`)
+group by bodegas.fundacion, premios.nombre_vino, vino.nombre_bodega
+order by antigüedad asc limit 5;
+select fundacion, nombre_bodega from bodegas;
+
+-- 8. ¿De qué país provienen la mayoría de usuarios de la aplicación?
+select      count(pais), pais 
+from        usuario
+group by    pais
+order by    count(*)
+desc limit 1;
+select * from usuario;
+
+-- 9. ¿Cuáles vinos argentinos de la cosecha 2014 obtuvieron una puntuación superior a 90 en los distintos premios?
+select       premios.nombre_vino, premios.ano_vino, premios.puntaje, bodegas.pais
+from         vino 
+join         premios on (premios.`nombre_vino`=vino.`nombre`)
+join         bodegas on (vino.`nombre_bodega`=bodegas.`nombre_bodega`)
+where        premios.ano_vino = 2014 and premios.puntaje > 90 and bodegas.pais = 'Argentina'
+group by     premios.nombre_premio_ref;
+select       nombre_vino,ano_vino,puntaje from premios;
+
+-- 10. ¿Cuál es el vino con el mejor promedio entre rankings de usuarios y premios obtenidos? 
+select       premios.nombre_vino,premios.puntaje,rankings.ranking,
+             avg(premios.puntaje)as promedio_puntaje, avg(rankings.ranking) as promedio_ranking
+from         premios
+join         rankings
+on           premios.nombre_vino = rankings.nombre_vino
+group by     premios.nombre_vino
+having       avg(premios.puntaje and rankings.ranking)     
+order by     premios.puntaje desc;         
+    
+    select   puntaje, nombre_vino
+    from     premios
+    group by nombre_vino
+    order by max(puntaje) desc;
+    
+    select   ranking, nombre_vino
+    from     rankings
+    group by ranking, nombre_vino
+    order by max(ranking) desc;

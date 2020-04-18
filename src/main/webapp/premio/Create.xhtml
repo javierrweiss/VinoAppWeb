@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="PremioCreateDlg" widgetVar="PremioCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreatePremioTitle}">
+            <h:form id="PremioCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{premioController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_premioId}" for="premioId" />
+                        <p:inputText id="premioId" value="#{premioController.selected.premioId}" title="#{bundle.CreatePremioTitle_premioId}" required="true" requiredMessage="#{bundle.CreatePremioRequiredMessage_premioId}"/>
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_nombrePremio}" for="nombrePremio" />
+                        <p:inputText id="nombrePremio" value="#{premioController.selected.nombrePremio}" title="#{bundle.CreatePremioTitle_nombrePremio}" required="true" requiredMessage="#{bundle.CreatePremioRequiredMessage_nombrePremio}"/>
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_puntaje}" for="puntaje" />
+                        <p:inputText id="puntaje" value="#{premioController.selected.puntaje}" title="#{bundle.CreatePremioTitle_puntaje}" />
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_medalla}" for="medalla" />
+                        <p:inputText id="medalla" value="#{premioController.selected.medalla}" title="#{bundle.CreatePremioTitle_medalla}" />
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_ano}" for="ano" />
+                        <p:inputText id="ano" value="#{premioController.selected.ano}" title="#{bundle.CreatePremioTitle_ano}" required="true" requiredMessage="#{bundle.CreatePremioRequiredMessage_ano}"/>
+                        <p:outputLabel value="#{bundle.CreatePremioLabel_vinoId}" for="vinoId" />
+                        <p:selectOneMenu id="vinoId" value="#{premioController.selected.vinoId}" >
+                            <f:selectItems value="#{vinoController.itemsAvailableSelectOne}"
+                                           var="vinoIdItem"
+                                           itemValue="#{vinoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{premioController.create}" value="#{bundle.Save}" update="display,:PremioListForm:datalist,:growl" oncomplete="handleSubmit(args,'PremioCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PremioCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

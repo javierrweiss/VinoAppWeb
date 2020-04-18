@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="BodegapremioViewDlg" widgetVar="BodegapremioViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewBodegapremioTitle}">
+            <h:form id="BodegapremioViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{bodegapremioController.selected != null}">
+                        <h:outputText value="#{bundle.ViewBodegapremioLabel_premiobodId}"/>
+                        <h:outputText value="#{bodegapremioController.selected.premiobodId}" title="#{bundle.ViewBodegapremioTitle_premiobodId}"/>
+                        <h:outputText value="#{bundle.ViewBodegapremioLabel_nombrePremiobod}"/>
+                        <h:outputText value="#{bodegapremioController.selected.nombrePremiobod}" title="#{bundle.ViewBodegapremioTitle_nombrePremiobod}"/>
+                        <h:outputText value="#{bundle.ViewBodegapremioLabel_distincion}"/>
+                        <h:outputText value="#{bodegapremioController.selected.distincion}" title="#{bundle.ViewBodegapremioTitle_distincion}"/>
+                        <h:outputText value="#{bundle.ViewBodegapremioLabel_ano}"/>
+                        <h:outputText value="#{bodegapremioController.selected.ano}" title="#{bundle.ViewBodegapremioTitle_ano}"/>
+                        <h:outputText value="#{bundle.ViewBodegapremioLabel_bodegaId}"/>
+                        <h:outputText value="#{bodegapremioController.selected.bodegaId}" title="#{bundle.ViewBodegapremioTitle_bodegaId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="BodegapremioViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

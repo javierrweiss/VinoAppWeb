@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="RankingViewDlg" widgetVar="RankingViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewRankingTitle}">
+            <h:form id="RankingViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{rankingController.selected != null}">
+                        <h:outputText value="#{bundle.ViewRankingLabel_rankingId}"/>
+                        <h:outputText value="#{rankingController.selected.rankingId}" title="#{bundle.ViewRankingTitle_rankingId}"/>
+                        <h:outputText value="#{bundle.ViewRankingLabel_ranking}"/>
+                        <h:outputText value="#{rankingController.selected.ranking}" title="#{bundle.ViewRankingTitle_ranking}"/>
+                        <h:outputText value="#{bundle.ViewRankingLabel_tiendaId}"/>
+                        <h:outputText value="#{rankingController.selected.tiendaId}" title="#{bundle.ViewRankingTitle_tiendaId}"/>
+                        <h:outputText value="#{bundle.ViewRankingLabel_usuarioId}"/>
+                        <h:outputText value="#{rankingController.selected.usuarioId}" title="#{bundle.ViewRankingTitle_usuarioId}"/>
+                        <h:outputText value="#{bundle.ViewRankingLabel_vinoId}"/>
+                        <h:outputText value="#{rankingController.selected.vinoId}" title="#{bundle.ViewRankingTitle_vinoId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="RankingViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

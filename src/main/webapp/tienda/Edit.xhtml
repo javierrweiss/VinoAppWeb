@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="TiendaEditDlg" widgetVar="TiendaEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditTiendaTitle}">
+            <h:form id="TiendaEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{tiendaController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_tiendaId}" for="tiendaId" />
+                        <p:inputText id="tiendaId" value="#{tiendaController.selected.tiendaId}" title="#{bundle.EditTiendaTitle_tiendaId}" required="true" requiredMessage="#{bundle.EditTiendaRequiredMessage_tiendaId}"/>
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_nombreT}" for="nombreT" />
+                        <p:inputText id="nombreT" value="#{tiendaController.selected.nombreT}" title="#{bundle.EditTiendaTitle_nombreT}" required="true" requiredMessage="#{bundle.EditTiendaRequiredMessage_nombreT}"/>
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_pais}" for="pais" />
+                        <p:inputText id="pais" value="#{tiendaController.selected.pais}" title="#{bundle.EditTiendaTitle_pais}" />
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_ciudad}" for="ciudad" />
+                        <p:inputText id="ciudad" value="#{tiendaController.selected.ciudad}" title="#{bundle.EditTiendaTitle_ciudad}" required="true" requiredMessage="#{bundle.EditTiendaRequiredMessage_ciudad}"/>
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_direccion}" for="direccion" />
+                        <p:inputText id="direccion" value="#{tiendaController.selected.direccion}" title="#{bundle.EditTiendaTitle_direccion}" required="true" requiredMessage="#{bundle.EditTiendaRequiredMessage_direccion}"/>
+                        <p:outputLabel value="#{bundle.EditTiendaLabel_paginaWeb}" for="paginaWeb" />
+                        <p:inputText id="paginaWeb" value="#{tiendaController.selected.paginaWeb}" title="#{bundle.EditTiendaTitle_paginaWeb}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{tiendaController.update}" value="#{bundle.Save}" update="display,:TiendaListForm:datalist,:growl" oncomplete="handleSubmit(args, 'TiendaEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="TiendaEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

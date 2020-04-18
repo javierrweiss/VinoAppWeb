@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="NotadecataCreateDlg" widgetVar="NotadecataCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateNotadecataTitle}">
+            <h:form id="NotadecataCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{notadecataController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateNotadecataLabel_notaDeCataId}" for="notaDeCataId" />
+                        <p:inputText id="notaDeCataId" value="#{notadecataController.selected.notaDeCataId}" title="#{bundle.CreateNotadecataTitle_notaDeCataId}" required="true" requiredMessage="#{bundle.CreateNotadecataRequiredMessage_notaDeCataId}"/>
+                        <p:outputLabel value="#{bundle.CreateNotadecataLabel_notaDeCata}" for="notaDeCata" />
+                        <p:inputText id="notaDeCata" value="#{notadecataController.selected.notaDeCata}" title="#{bundle.CreateNotadecataTitle_notaDeCata}" />
+                        <p:outputLabel value="#{bundle.CreateNotadecataLabel_usuarioId}" for="usuarioId" />
+                        <p:selectOneMenu id="usuarioId" value="#{notadecataController.selected.usuarioId}" >
+                            <f:selectItems value="#{usuarioController.itemsAvailableSelectOne}"
+                                           var="usuarioIdItem"
+                                           itemValue="#{usuarioIdItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateNotadecataLabel_vinoId}" for="vinoId" />
+                        <p:selectOneMenu id="vinoId" value="#{notadecataController.selected.vinoId}" >
+                            <f:selectItems value="#{vinoController.itemsAvailableSelectOne}"
+                                           var="vinoIdItem"
+                                           itemValue="#{vinoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{notadecataController.create}" value="#{bundle.Save}" update="display,:NotadecataListForm:datalist,:growl" oncomplete="handleSubmit(args,'NotadecataCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="NotadecataCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,356 @@
+11/01/2020
+
+1. Tenemos un problema con el log de jooq. Instalamos la dependencia log4j. Lo hicimos junto 
+a las dependencias maven. No sé si debimos incluirla específicamente en el plugin de jooq. Esto 
+es algo que habría que probar. 
+El tema es que cuando queremos replicar el código de "Thoughts on Java" 
+https://www.youtube.com/watch?v=2LH_miNH7h0
+específicamente: 
+log.info(ba.getFirstName()...());
+El sistema no reconoce ni la referencia log ni el método info. Reconoce a log directamente
+como un método. 
+
+2. Estamos experimentando con hacer trabajar a JOOQ y a EclipseLink juntos. Algunas piezas
+de código son solo eso. Sin embargo, haciendo las cosas con mayor conciencia lo ideal es dejar
+aquellas consultas sencillas a EclipseLink con sus NamedQueries. De modo que muchos de los méto
+dos default que estaban en las interfaces construidos con API Stream sencillamente pueden 
+transformarse en la implementación de una NamedQuery.JOOQ, sin embargo, debe usarse para 
+aquellas consultas que no resultan fáciles de esta manera. Por lo general, aquellas consultas
+en las que pedimos un dato que ingresa el usuario y que devuelven una lista con varios
+registros o rows.
+
+2.1 En este sentido, queda pendiente redefinir todos los métodos de todas las interfaces 
+utilizando JPA y redefinir todos los métodos de los repositorios (salvo por el CRUD)
+utilizando JOOQ.
+
+2.2 Posteriormente, habría que hacer un Test de los repositorios.
+
+3. Seguimos teniendo el problema de inyección con Eclipse al compilar el proyecto.
+mvn clean install -U desde la línea de comandos parecía haber funcionado.
+
+4. Estamos experimentando también con MongoDB. Ya logramos crear nuestra base de datos en 
+MongoAtlas. Ahora es hora de crear un Test de los repositorios Mongo, para ver si el diseño
+que copiamos funciona bien. Primero debemos revisar concienzudamente cada RepositorioMongo
+y después diseñamos un test como el que ya hicimos para TP2.
+
+5. Una tarea aún pendiente es terminar de configurar el funcionamiento del WebScraping.
+La idea inicial es que los datos que el usuario no sea capaz de hallar en la base de datos 
+puedan buscarse en las páginas web provistas y que la base de datos pueda alimentarse 
+de estas búsquedas. Hace falta mucho por hacer en este punto. 
+  
+6. Por último (eso creo), tenemos dos ramales.El primero corregir la GUI swing, esto es, 
+incorporarle todas las nuevas funcionalidades y corregir el problema del login. Lo segundo 
+es diseñar un interfaz web para nuestra aplicación. Aquí hay muchísimo más aún que hacer.
+
+
+18/01/2020
+
+1.Corrimos el comando mvn verify en la línea de comandos. Aparentemente, la vieja 
+excepción del problema de inyección se fue. Al ejecutar el programa en Netbeans obtuvimos una nueva
+excepción: 
+
+Exception in thread "AWT-EventQueue-0" Local Exception Stack: 
+Exception [EclipseLink-30005] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): 
+org.eclipse.persistence.exceptions.PersistenceUnitLoadingException
+Exception Description: An exception was thrown while searching for persistence archives with ClassLoader: 
+jdk.internal.loader.ClassLoaders$AppClassLoader@bcc55f
+Internal Exception: javax.persistence.PersistenceException: 
+Exception [EclipseLink-28018] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): 
+org.eclipse.persistence.exceptions.EntityManagerSetupException
+Exception Description: Predeployment of PersistenceUnit [JPAPU2] failed.
+Internal Exception: Exception [EclipseLink-7250] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): 
+org.eclipse.persistence.exceptions.ValidationException
+Exception Description: [class vinoapp.entidades.Bodegapremio] uses a non-entity 
+[class vinoapp.entidades.Bodega] as target entity in the relationship attribute [field bodegaId].
+at org.eclipse.persistence.exceptions.PersistenceUnitLoadingException.exceptionSearchingForPersistenceResources(PersistenceUnitLoadingException.java:129)
+at org.eclipse.persistence.jpa.PersistenceProvider.createEntityManagerFactoryImpl(PersistenceProvider.java:118)
+at org.eclipse.persistence.jpa.PersistenceProvider.createEntityManagerFactory(PersistenceProvider.java:191)
+at javax.persistence.Persistence.createEntityManagerFactory(Persistence.java:80)
+at javax.persistence.Persistence.createEntityManagerFactory(Persistence.java:55)
+at trabajopracticopoo2.vinoapp.gui.FormularioDeRegistro.<init>(FormularioDeRegistro.java:21)
+at trabajopracticopoo2.vinoapp.gui.JInicio.<init>(JInicio.java:13)
+at trabajopracticopoo2.vinoapp.gui.JInicio$3.run(JInicio.java:173)
+at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313)
+at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770)
+at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
+at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
+at java.base/java.security.AccessController.doPrivileged(Native Method)
+at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:740)
+at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+  El problema se remonta al momento en el que creamos un método ToStringView() en el que invoqué objetos de las clases
+vino, bodega y usuario para las entidades PremiosBodega y Notasdecata respectivamente. 
+  La API los está confundiendo por alguna razón; los toma como inicializadores de la clase. Tanto es así, que no sé 
+cómo, en la entidad Bodegapremio introdujo el objeto bodega en los constructores de la entidad. Este es el origen del error.
+  Para no perder lo que queríamos lograr al sobreescribir el método ToString hicimos static la inicialización de los objetos 
+mencionados.
+Después de correr de nuevo el programa, el error persiste.
+
+Eliminamos todas las entidades y las volvimos a crear  con el JPA. Ahora surgieron nuevas excepciones,
+probablemente relacionado al hecho de que agregamos el fetchtype LAZY.
+
+Este es el stack trace:
+
+[EL Info]: 2020-01-18 16:02:12.207--ServerSession(7057187)--EclipseLink, version: Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158
+[EL Info]: connection: 2020-01-18 16:02:12.65--Not able to detect platform for vendor name [MariaDB[10.3.18-MariaDB-0+deb10u1, 10]]. Defaulting to [org.eclipse.persistence.platform.database.DatabasePlatform]. The database dialect used may not match with the database you are using. Please explicitly provide a platform using property "eclipselink.target-database".
+[EL Warning]: metadata: 2020-01-18 16:02:12.696--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [bodegaId] for the entity class [class vinoapp.entidades.Vino] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.701--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Notadecata] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.702--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [usuarioId] for the entity class [class vinoapp.entidades.Notadecata] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.704--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [bodegaId] for the entity class [class vinoapp.entidades.Bodegapremio] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.706--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Premio] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.708--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Ranking] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-01-18 16:02:12.708--ServerSession(7057187)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [usuarioId] for the entity class [class vinoapp.entidades.Ranking] since weaving was not enabled or did not occur.
+[EL Info]: connection: 2020-01-18 16:02:13.16--ServerSession(7057187)--/file:/home/josejavier84/NetBeansProjects/Vinoapp/target/classes/_JPAPU2 login successful
+[EL Warning]: 2020-01-18 16:02:13.392--ServerSession(7057187)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=15) You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NUMBER(19), PRIMARY KEY (SEQ_NAME))' at line 1
+Error Code: 1064
+Call: CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), PRIMARY KEY (SEQ_NAME))
+Query: DataModifyQuery(sql="CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), PRIMARY KEY (SEQ_NAME))")
+[EL Warning]: 2020-01-18 16:02:13.41--ServerSession(7057187)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=15) Table 'VinoappDB.SEQUENCE' doesn't exist
+Error Code: 1146
+Call: SELECT * FROM SEQUENCE WHERE SEQ_NAME = 'SEQ_GEN_IDENTITY'
+Query: DataReadQuery(sql="SELECT * FROM SEQUENCE WHERE SEQ_NAME = 'SEQ_GEN_IDENTITY'")
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+También arrojó un error con respecto al nombre de la unidad de persistencia. Ya está arreglado.
+Por lo menos, el programa compila con éxito.
+
+2. Estamos implementando el punto 2.1 del log anterior. Hay que verificar muchas cosas. Es incierto 
+cómo se comportarán los métodos cuando se testeen.Tenemos problemas con el repositorio ranking
+para la devolución de un conjunto de registros de distintos tipos de primitivos. Faltan por realizar
+las clases e interfaces:
+TiendaRepositorio
+UsuarioRepositorio
+VinoRepositorio
+
+  
+7/2/2020
+
+Atención!! El em.close() no puede ir después del return
+Hay que crear una variable dentro del scope de la transacción, aún abierta,y después
+referirla al return.
+
+Tenemos problemas con las NamedQueries porque no sabemos cómo pasarles el parámetro. =>
+Después de la namedQuery hay que agregar el método setParameter(String, namedParameter) 
+y después getResultList();
+
+Algo a tomar en cuenta: en el par de tutoriales que he visto crean una lista del tipo Object[] en vez
+de simplemente Object como la estoy haciendo yo. Y después recorren el array con un for y asignan 
+los valores. No he hecho esto así porque no estoy en una clase test, como lo están los tutoriales, y
+no necesito ese tipo de retorno. Pero habrá que ver si de verdad necesito un List<Object[]> en vez de simplemente
+un List<Object>.
+También está la opción de List<Bodega>,por ejemplo. Aunque esta me resulta problemática.
+
+Esta es la excepción de hoy (aunque el build es exitoso):
+
+[EL Warning]: 2020-02-07 18:22:26.833--ServerSession(6553943)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=35) You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NUMBER(19), PRIMARY KEY (SEQ_NAME))' at line 1
+Error Code: 1064
+Call: CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), PRIMARY KEY (SEQ_NAME))
+Query: DataModifyQuery(sql="CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), PRIMARY KEY (SEQ_NAME))")
+[EL Warning]: 2020-02-07 18:22:26.85--ServerSession(6553943)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=35) Table 'VinoappDB.SEQUENCE' doesn't exist
+Error Code: 1146
+
+12/02/2020
+
+Hoy hemos tratado de armar el sistema de soporte para la búsqueda de vinos haciendo webscrapping con algunas 
+páginas seleccionadas.
+Se nos ocurrió que sería mejor hacer una interfaz en vez de una clase.
+Más allá de esto hay algunos problemas de diseño, junto con otros problemas prácticos.
+El problema práctico consiste, por una parte, en la especificidad del método de webscrapping, el cual requiere
+información específica de la estructura html de la página. Por ende, no es fácil pasarle esta info a través de los
+parámetros de un método; hay que hardcodear. 
+El problema de diseño va aparejado a este: no podemos diseñar una interfaz lo suficientemente abstracta.
+Debe haber un método específico para cada página web. Además, nos veríamos en la necesidad de realizar todo dentro
+de un mismo método o de encadenar dos métodos. Si encadenamos tendríamos que usar el API stream.
+Acá fracamente estoy perdido. No sé qué hacer, ni cómo ejecutar las pocas ideas que se me ocurren.
+El punto donde los problemas prácticos y técnicos se hacen difíciles de manejar es en lo siguiente. Si deseamos
+cumplir nuestro objetivo debemos diseñar un algoritmo que haga lo siguiente:
+1. Pasarle el input a la página con el contenido de la búsqueda.
+2. Capturar la nueva URL resultado de la búsqueda.
+3. Escanear la nueva html para indicarle a Jsoup dónde buscar.
+4. Recuperar los datos.
+He identificado la etiqueta donde tengo que pasar el string con las palabras introducidas por el usuario.
+Pero se trata de un evento (event) que se activa con ENTER. Si paso el dato exitosamente, ¿cómo activo la 
+búsqueda? ¿Cómo sé a qué nuevo url me va a mandar?... En fin, demasiadas dudas y problemas para poder dar
+un paso adelante coherentemente.
+
+Decidimos hacer un test sencillo. Buscamos un vino y pasamos los datos del html a Jsoup. 
+Resultado:
+
+org.jsoup.HttpStatusException: HTTP error fetching URL. Status=403...
+
+Supuestamente un 403 significa que el servidor nos negó el acceso.
+Aparentemente esto se debe a que no pasamos los datos del userAgent (una variable que ignoraba).
+Lo hicimos, sin embargo, el error persiste. 
+Probamos con otra búsqueda y lo mismo.
+
+05/03/2020
+
+El error con la base de datos del 7/2/2020 aparentemente se debía a que no habíamos comentado el comando para crear
+la base de datos utilizado para phpmyadmin.
+
+14/03/2020
+
+Intentamos unificar el control de las conexiones en una sola clase, es decir, manejar las bases de datos sql y no-sql 
+desde una misma instancia.Creamos un método para manejar la conexión Mongo.
+El resultado demuestra nuestra supina ignorancia en el tema. Sencillamente, no sé qué estoy haciendo. No 
+comprendo qué está pasando, incluso cuando se logra una conexión existosa con la base de datos.
+Pensé que MongoClient, al ser Closeable, era el que manejaba la conexión.
+Pero el método manda un error:
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+(Notar que el 18/01 tuvimos un error semejante)
+
+Y si intentamos agregar datos la siguiente línea manda una 
+NullPointerException: "MongoCollection<Document> usersCollection=database.getCollection("bodegas");"
+
+java.lang.NullPointerException
+	at vinoapp.tests.TestMongoDB.main(TestMongoDB.java:20)
+
+Necesitamos un buen manual sobre MongoDB y Java, quizá en la misma página web, porque de verdad estamos
+tirando flechas sin ton ni son. Aunado a ello la documentación de los métodos es inexistente, por lo que no 
+tenemos mucha ayuda.
+
+Ya que eliminamos las clases del paquete GUI, una de las cuales contenía el main del programa, debemos crear
+una clase main que permita iniciar el programa en forma independiente del GUI.
+
+Estamos tratando de hacer el test de los repositorios, sin embargo, teníamos un error que no logramos 
+comprender. Hoy lo corro y parece haber funcionado. El build es exitoso.
+Sin embargo, no todos lo métodos trabajaron bien.
+En uno de los métodos de la interface Usuarios emplee el método getSingleResult(). Acá nos dice el compilador
+que no produjo ningún resultado.
+
+LF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[EL Info]: 2020-03-14 18:59:28.398--ServerSession(27932218)--EclipseLink, version: 
+Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158
+[EL Info]: connection: 2020-03-14 18:59:28.445--Not able to detect platform for vendor name 
+[MariaDB[10.3.22-MariaDB-0+deb10u1, 10]]. 
+Defaulting to [org.eclipse.persistence.platform.database.DatabasePlatform]. 
+The database dialect used may not match with the database you are using. 
+Please explicitly provide a platform using property "eclipselink.target-database".
+[EL Warning]: metadata: 2020-03-14 18:59:28.49--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Ranking] since weaving was not enabled or 
+did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.491--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [usuarioId] for the entity class [class vinoapp.entidades.Ranking] since weaving was not enabled or 
+did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.499--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Notadecata] since weaving was not enabled or 
+did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.5--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [usuarioId] for the entity class [class vinoapp.entidades.Notadecata] since weaving was not enabled or 
+did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.503--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [vinoId] for the entity class [class vinoapp.entidades.Premio] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.504--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [bodegaId] for the entity class [class vinoapp.entidades.Bodegapremio] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2020-03-14 18:59:28.514--ServerSession(27932218)--Reverting the lazy setting on the OneToOne or 
+ManyToOne attribute [bodegaId] for the entity class [class vinoapp.entidades.Vino] since weaving was not enabled or 
+did not occur.
+[EL Info]: connection: 2020-03-14 18:59:29.378--ServerSession(27932218)
+--/file:/home/josejavier84/NetBeansProjects/Vinoapp/target/classes/_JPAPU2 login successful
+[EL Warning]: 2020-03-14 18:59:29.801--ServerSession(27932218)--Exception [EclipseLink-4002] 
+(Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=14) You have an error in your SQL syntax; 
+check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NUMBER(19), 
+PRIMARY KEY (SEQ_NAME))' at line 1
+Error Code: 1064
+Call: CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), PRIMARY KEY (SEQ_NAME))
+Query: DataModifyQuery(sql="CREATE TABLE SEQUENCE (SEQ_NAME VARCHAR(50) NOT NULL, SEQ_COUNT NUMBER(19), 
+PRIMARY KEY (SEQ_NAME))")
+[EL Warning]: 2020-03-14 18:59:29.832--ServerSession(27932218)--Exception [EclipseLink-4002] 
+(Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=14) Table 'VinoappDB.SEQUENCE' doesn't exist
+Error Code: 1146
+Call: SELECT * FROM SEQUENCE WHERE SEQ_NAME = 'SEQ_GEN_IDENTITY'
+Query: DataReadQuery(sql="SELECT * FROM SEQUENCE WHERE SEQ_NAME = 'SEQ_GEN_IDENTITY'")
+[EL Warning]: 2020-03-14 18:59:29.956--ClientSession(2460719)--Exception [EclipseLink-4002] 
+(Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=14) Table 'VinoappDB.SEQUENCE' doesn't exist
+Error Code: 1146
+Call: UPDATE SEQUENCE SET SEQ_COUNT = SEQ_COUNT + ? WHERE SEQ_NAME = ?
+	bind => [2 parameters bound]
+Query: DataModifyQuery(name="SEQ_GEN_IDENTITY" sql="UPDATE SEQUENCE SET SEQ_COUNT = SEQ_COUNT + ? WHERE SEQ_NAME = ?")
+vinoapp.entidades.Usuario[ usuarioId=0 ]
+****************************
+[EL Warning]: 2020-03-14 18:59:29.974--UnitOfWork(16233647)--Exception [EclipseLink-4002] 
+(Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=14) Table 'VinoappDB.Usuario' doesn't exist
+Error Code: 1146
+Call: SELECT u.cuentaUsuario, u.nombre, u.apellido, u.pais, u.region,u.ciudad, u.email, u.codPostal 
+FROM Usuario WHERE u.usuarioId = ?
+	bind => [1 parameter bound]
+Query: DataReadQuery(sql="SELECT u.cuentaUsuario, u.nombre, u.apellido, u.pais, u.region,u.ciudad, u.email,
+ u.codPostal FROM Usuario WHERE u.usuarioId = ?")
+[EL Warning]: 2020-03-14 18:59:29.987--ClientSession(10605087)--Exception [EclipseLink-4002] 
+(Eclipse Persistence Services - 2.7.5.v20191016-ea124dd158): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: (conn=14) Table 'VinoappDB.SEQUENCE' doesn't exist
+Error Code: 1146
+Call: UPDATE SEQUENCE SET SEQ_COUNT = SEQ_COUNT + ? WHERE SEQ_NAME = ?
+	bind => [2 parameters bound]
+Query: DataModifyQuery(name="SEQ_GEN_IDENTITY" sql="UPDATE SEQUENCE SET SEQ_COUNT = SEQ_COUNT + ? WHERE SEQ_NAME = ?")
+vinoapp.entidades.Usuario[ usuarioId=1 ]
+vinoapp.entidades.Usuario[ usuarioId=2 ]
+vinoapp.entidades.Usuario[ usuarioId=3 ]
+vinoapp.entidades.Usuario[ usuarioId=4 ]
+vinoapp.entidades.Usuario[ usuarioId=5 ]
+vinoapp.entidades.Usuario[ usuarioId=6 ]
+vinoapp.entidades.Usuario[ usuarioId=7 ]
+vinoapp.entidades.Usuario[ usuarioId=8 ]
+vinoapp.entidades.Usuario[ usuarioId=9 ]
+vinoapp.entidades.Usuario[ usuarioId=10 ]
+vinoapp.entidades.Usuario[ usuarioId=11 ]
+vinoapp.entidades.Usuario[ usuarioId=12 ]
+vinoapp.entidades.Usuario[ usuarioId=13 ]
+vinoapp.entidades.Usuario[ usuarioId=14 ]
+vinoapp.entidades.Usuario[ usuarioId=15 ]
+vinoapp.entidades.Usuario[ usuarioId=16 ]
+vinoapp.entidades.Usuario[ usuarioId=17 ]
+vinoapp.entidades.Usuario[ usuarioId=18 ]
+vinoapp.entidades.Usuario[ usuarioId=19 ]
+vinoapp.entidades.Usuario[ usuarioId=20 ]
+vinoapp.entidades.Usuario[ usuarioId=21 ]
+vinoapp.entidades.Usuario[ usuarioId=22 ]
+vinoapp.entidades.Usuario[ usuarioId=23 ]
+vinoapp.entidades.Usuario[ usuarioId=24 ]
+vinoapp.entidades.Usuario[ usuarioId=25 ]
+vinoapp.entidades.Usuario[ usuarioId=26 ]
+vinoapp.entidades.Usuario[ usuarioId=27 ]
+vinoapp.entidades.Usuario[ usuarioId=28 ]
+vinoapp.entidades.Usuario[ usuarioId=29 ]
+vinoapp.entidades.Usuario[ usuarioId=30 ]
+vinoapp.entidades.Usuario[ usuarioId=31 ]
+vinoapp.entidades.Usuario[ usuarioId=32 ]
+vinoapp.entidades.Usuario[ usuarioId=33 ]
+vinoapp.entidades.Usuario[ usuarioId=34 ]
+vinoapp.entidades.Usuario[ usuarioId=35 ]
+vinoapp.entidades.Usuario[ usuarioId=36 ]
+vinoapp.entidades.Usuario[ usuarioId=37 ]
+vinoapp.entidades.Usuario[ usuarioId=38 ]
+vinoapp.entidades.Usuario[ usuarioId=39 ]
+javax.persistence.NoResultException: getSingleResult() did not retrieve any entities.
+	at org.eclipse.persistence.internal.jpa.QueryImpl.throwNoResultException(QueryImpl.java:985)
+	at org.eclipse.persistence.internal.jpa.QueryImpl.getSingleResult(QueryImpl.java:535)
+	at org.eclipse.persistence.internal.jpa.EJBQueryImpl.getSingleResult(EJBQueryImpl.java:404)
+	at vinoapp.repositorios.jpa.UsuarioRepositorio.getByCiudad(UsuarioRepositorio.java:162)
+	at vinoapp.tests.TestRepositorios.main(TestRepositorios.java:43)
+
+Es un stack trace bastante largo y complejo. En primer lugar, parece ser que EclipseLink no reconoce 
+una conexión con MariaDB, y por ende, no reconoce a la base de datos.
+Sin embargo, parece ser que una operación de update resultó exitosa. Esto es confuso. Sobre todo porque
+después alega que las tablas a las que nos referimos no existen.

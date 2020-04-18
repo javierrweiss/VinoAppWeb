@@ -1,0 +1,77 @@
+drop database if exists VinoappDB;
+create database VinoappDB;
+use VinoappDB;
+
+create table bodegas (
+bodega_code int (10) AUTO_INCREMENT NOT NULL,
+nombre_bodega varchar (45) NOT NULL,
+pais varchar (35) NOT NULL, 
+ubicacion varchar (45),
+fundacion int (4),
+PRIMARY KEY (bodega_code)
+);
+
+create table usuario (
+usuario_ref_num int (10) AUTO_INCREMENT NOT NULL,
+cuenta_usuario varchar(45) NOT NULL,
+nombre varchar (35) NOT NULL,
+apellido varchar (35) NOT NULL,
+pais varchar (35) NOT NULL,
+region varchar (45) NOT NULL,
+ciudad varchar (45) NOT NULL,
+email varchar (50) NOT NULL,
+cod_postal varchar (12),
+nota_de_cata varchar (2500),
+PRIMARY KEY (usuario_ref_num)
+);
+
+create table tiendas (
+tienda_id int (10) AUTO_INCREMENT NOT NULL,
+nombre_T varchar (45) NOT NULL,
+pais varchar(35),
+ciudad varchar (45) NOT NULL,
+direccion varchar (45) NOT NULL,
+pagina_web varchar (50),
+PRIMARY KEY (tienda_id)
+);
+
+create table vino (
+vino_id int (10) NOT NULL AUTO_INCREMENT,
+nombre varchar(40) NOT NULL,
+cepas varchar (35),
+color enum ('tinto','blanco','rosado') NOT NULL,
+cosecha int (4) UNSIGNED NOT NULL,
+categoria enum ('joven','reserva','gran_reserva','espumante_extrabrut','espumante_brut','espumante_sec','espumante_demisec','licoroso','late_harvest') NOT NULL,
+enologo varchar (35),
+nombre_bodega varchar (45), 
+terruno varchar (35),
+PRIMARY KEY (vino_ID)
+);
+
+create table premios (
+nombre_premio_ref int (10) NOT NULL AUTO_INCREMENT,
+nombre_premio varchar(45) NOT NULL,
+nombre_vino varchar (40) NOT NULL,
+cepas varchar (35) NOT NULL,
+ano_vino int (4) NOT NULL,
+puntaje int (3) UNSIGNED,
+medalla enum ('oro','plata','bronce'),
+PRIMARY KEY (nombre_premio_ref)
+);
+
+create table rankings (
+ranking_ref int (10) NOT NULL AUTO_INCREMENT,
+cuenta_usuario varchar (45),
+ranking enum ('r1','r2','r3','r4','r5'),
+nombre_vino varchar(40),
+cepas varchar (35),
+ano_vino int (4),
+nombre_T varchar (45),
+direccion varchar (45),
+PRIMARY KEY (ranking_ref)
+);
+
+Problemas: 
+1.Ausencia de clave foránea (ya que en versiones anteriores nos dio muchos problemas)
+2.Redundancia en los campos de las diferentes tablas 
+3.Falta de uniformidad en los nombres de las claves primarias

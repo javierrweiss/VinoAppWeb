@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="RankingCreateDlg" widgetVar="RankingCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateRankingTitle}">
+            <h:form id="RankingCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{rankingController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateRankingLabel_rankingId}" for="rankingId" />
+                        <p:inputText id="rankingId" value="#{rankingController.selected.rankingId}" title="#{bundle.CreateRankingTitle_rankingId}" required="true" requiredMessage="#{bundle.CreateRankingRequiredMessage_rankingId}"/>
+                        <p:outputLabel value="#{bundle.CreateRankingLabel_ranking}" for="ranking" />
+                        <p:inputText id="ranking" value="#{rankingController.selected.ranking}" title="#{bundle.CreateRankingTitle_ranking}" />
+                        <p:outputLabel value="#{bundle.CreateRankingLabel_tiendaId}" for="tiendaId" />
+                        <p:inputText id="tiendaId" value="#{rankingController.selected.tiendaId}" title="#{bundle.CreateRankingTitle_tiendaId}" />
+                        <p:outputLabel value="#{bundle.CreateRankingLabel_usuarioId}" for="usuarioId" />
+                        <p:selectOneMenu id="usuarioId" value="#{rankingController.selected.usuarioId}" >
+                            <f:selectItems value="#{usuarioController.itemsAvailableSelectOne}"
+                                           var="usuarioIdItem"
+                                           itemValue="#{usuarioIdItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateRankingLabel_vinoId}" for="vinoId" />
+                        <p:selectOneMenu id="vinoId" value="#{rankingController.selected.vinoId}" >
+                            <f:selectItems value="#{vinoController.itemsAvailableSelectOne}"
+                                           var="vinoIdItem"
+                                           itemValue="#{vinoIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{rankingController.create}" value="#{bundle.Save}" update="display,:RankingListForm:datalist,:growl" oncomplete="handleSubmit(args,'RankingCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="RankingCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

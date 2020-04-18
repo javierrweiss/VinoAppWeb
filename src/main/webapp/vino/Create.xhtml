@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VinoCreateDlg" widgetVar="VinoCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateVinoTitle}">
+            <h:form id="VinoCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vinoController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_vinoId}" for="vinoId" />
+                        <p:inputText id="vinoId" value="#{vinoController.selected.vinoId}" title="#{bundle.CreateVinoTitle_vinoId}" required="true" requiredMessage="#{bundle.CreateVinoRequiredMessage_vinoId}"/>
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_nombre}" for="nombre" />
+                        <p:inputText id="nombre" value="#{vinoController.selected.nombre}" title="#{bundle.CreateVinoTitle_nombre}" required="true" requiredMessage="#{bundle.CreateVinoRequiredMessage_nombre}"/>
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_cepas}" for="cepas" />
+                        <p:inputText id="cepas" value="#{vinoController.selected.cepas}" title="#{bundle.CreateVinoTitle_cepas}" />
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_color}" for="color" />
+                        <p:inputText id="color" value="#{vinoController.selected.color}" title="#{bundle.CreateVinoTitle_color}" required="true" requiredMessage="#{bundle.CreateVinoRequiredMessage_color}"/>
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_cosecha}" for="cosecha" />
+                        <p:inputText id="cosecha" value="#{vinoController.selected.cosecha}" title="#{bundle.CreateVinoTitle_cosecha}" required="true" requiredMessage="#{bundle.CreateVinoRequiredMessage_cosecha}"/>
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_categoria}" for="categoria" />
+                        <p:inputText id="categoria" value="#{vinoController.selected.categoria}" title="#{bundle.CreateVinoTitle_categoria}" required="true" requiredMessage="#{bundle.CreateVinoRequiredMessage_categoria}"/>
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_enologo}" for="enologo" />
+                        <p:inputText id="enologo" value="#{vinoController.selected.enologo}" title="#{bundle.CreateVinoTitle_enologo}" />
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_terruno}" for="terruno" />
+                        <p:inputText id="terruno" value="#{vinoController.selected.terruno}" title="#{bundle.CreateVinoTitle_terruno}" />
+                        <p:outputLabel value="#{bundle.CreateVinoLabel_bodegaId}" for="bodegaId" />
+                        <p:selectOneMenu id="bodegaId" value="#{vinoController.selected.bodegaId}" >
+                            <f:selectItems value="#{bodegaController.itemsAvailableSelectOne}"
+                                           var="bodegaIdItem"
+                                           itemValue="#{bodegaIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{vinoController.create}" value="#{bundle.Save}" update="display,:VinoListForm:datalist,:growl" oncomplete="handleSubmit(args,'VinoCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="VinoCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

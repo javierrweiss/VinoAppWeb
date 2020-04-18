@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="VinoViewDlg" widgetVar="VinoViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewVinoTitle}">
+            <h:form id="VinoViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{vinoController.selected != null}">
+                        <h:outputText value="#{bundle.ViewVinoLabel_vinoId}"/>
+                        <h:outputText value="#{vinoController.selected.vinoId}" title="#{bundle.ViewVinoTitle_vinoId}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_nombre}"/>
+                        <h:outputText value="#{vinoController.selected.nombre}" title="#{bundle.ViewVinoTitle_nombre}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_cepas}"/>
+                        <h:outputText value="#{vinoController.selected.cepas}" title="#{bundle.ViewVinoTitle_cepas}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_color}"/>
+                        <h:outputText value="#{vinoController.selected.color}" title="#{bundle.ViewVinoTitle_color}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_cosecha}"/>
+                        <h:outputText value="#{vinoController.selected.cosecha}" title="#{bundle.ViewVinoTitle_cosecha}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_categoria}"/>
+                        <h:outputText value="#{vinoController.selected.categoria}" title="#{bundle.ViewVinoTitle_categoria}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_enologo}"/>
+                        <h:outputText value="#{vinoController.selected.enologo}" title="#{bundle.ViewVinoTitle_enologo}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_terruno}"/>
+                        <h:outputText value="#{vinoController.selected.terruno}" title="#{bundle.ViewVinoTitle_terruno}"/>
+                        <h:outputText value="#{bundle.ViewVinoLabel_bodegaId}"/>
+                        <h:outputText value="#{vinoController.selected.bodegaId}" title="#{bundle.ViewVinoTitle_bodegaId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="VinoViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

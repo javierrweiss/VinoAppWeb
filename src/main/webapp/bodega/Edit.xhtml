@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="BodegaEditDlg" widgetVar="BodegaEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditBodegaTitle}">
+            <h:form id="BodegaEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{bodegaController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditBodegaLabel_bodegaId}" for="bodegaId" />
+                        <p:inputText id="bodegaId" value="#{bodegaController.selected.bodegaId}" title="#{bundle.EditBodegaTitle_bodegaId}" required="true" requiredMessage="#{bundle.EditBodegaRequiredMessage_bodegaId}"/>
+                        <p:outputLabel value="#{bundle.EditBodegaLabel_nombreBodega}" for="nombreBodega" />
+                        <p:inputText id="nombreBodega" value="#{bodegaController.selected.nombreBodega}" title="#{bundle.EditBodegaTitle_nombreBodega}" required="true" requiredMessage="#{bundle.EditBodegaRequiredMessage_nombreBodega}"/>
+                        <p:outputLabel value="#{bundle.EditBodegaLabel_pais}" for="pais" />
+                        <p:inputText id="pais" value="#{bodegaController.selected.pais}" title="#{bundle.EditBodegaTitle_pais}" />
+                        <p:outputLabel value="#{bundle.EditBodegaLabel_ubicacion}" for="ubicacion" />
+                        <p:inputText id="ubicacion" value="#{bodegaController.selected.ubicacion}" title="#{bundle.EditBodegaTitle_ubicacion}" />
+                        <p:outputLabel value="#{bundle.EditBodegaLabel_fundacion}" for="fundacion" />
+                        <p:inputText id="fundacion" value="#{bodegaController.selected.fundacion}" title="#{bundle.EditBodegaTitle_fundacion}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{bodegaController.update}" value="#{bundle.Save}" update="display,:BodegaListForm:datalist,:growl" oncomplete="handleSubmit(args, 'BodegaEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="BodegaEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
